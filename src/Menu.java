@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -7,46 +8,61 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Menu extends Application {
+import java.awt.*;
+
+public class Menu {
 
 	private BorderPane container;
-	private Button btnPvP= new Button();
+	private Button btnPvP;
 	private Button btnPvC;
 	private Label lblWelcome;
+	private HBox row;
+	private VBox column;
 
-	public static void main(String args []) {
-
-		Application.launch(args);
+	public Menu(){
+		initUILayout();
+		initUIStyle();
+		initEvents();
 	}
 	public void initUILayout(){
+
 		container = new BorderPane();
+
 		btnPvP = new Button("Player vs Player");
 		btnPvC = new Button("Player vs Co");
 		lblWelcome = new Label("Welcome to Billard Game");
-		HBox row = new HBox();
+
+		row = new HBox();
+		row.setAlignment(Pos.CENTER);
 		row.getChildren().addAll(btnPvP,btnPvC);
-		VBox column = new VBox();
+
+		column = new VBox();
+		column.setAlignment(Pos.CENTER);
 		column.getChildren().addAll(lblWelcome,row);
+
 		container.setCenter(column);
 	}
 	public void initUIStyle(){
+
 		container.getStyleClass().add("container");
-
-
+		row.getStyleClass().add("buttons-container");
+		column.getStyleClass().add("form-container");
 		btnPvP.getStyleClass().addAll("btn","pvp");
 		btnPvC.getStyleClass().addAll("btn","pvc");
-
+		lblWelcome.getStyleClass().add("lblWecome");
 	}
-	@Override
-	public void start(Stage stage) throws Exception {
-		initUILayout();
-		initUIStyle();
-		Scene s = new Scene(container,1000,800);
-		s.getStylesheets().add("assets/styles/menu.css");
+	public void initEvents(){
+		btnPvP.setOnMouseClicked(e -> {
 
-		stage.setScene(s);
-		stage.show();
+			Main.activate("Game");
+		});
 	}
+
+	public BorderPane getContainer() {
+		return container;
+	}
+
+
 }
 /*import javafx.application.Application;
 import javafx.event.EventHandler;

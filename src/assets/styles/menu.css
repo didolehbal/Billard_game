@@ -3,5 +3,18 @@
     -fx-background-color: #DFB951;
     -fx-border-radius: 20;
     -fx-background-radius: 20;
-    -fx-padding: 5;
+    -fx-padding: 10;
+}
+
+.container{
+    -fx-background-color: red;
+    -fx-min-width: 100%;
+    -fx-min-height: 100%;
+}
+.form-container{
+    -fx-background-color: yellow;
+
+}
+.buttons-container{
+
 }

@@ -6,12 +6,18 @@ import java.util.HashMap;
 
 public class Main extends Application {
     public static Scene s;
-
+    public static Stage st;
     protected static void activate(String name){
         System.out.println(name + " rendering...");
             switch (name){
-                case "Menu" : s.setRoot(new Menu().getContainer());
-                case "Game" : s.setRoot(new Game().getContainer());
+                case "Menu" :
+                    s.setRoot(new Menu().getContainer());
+                    st.sizeToScene(); //resize the stage to fit the scene
+                    break;
+                case "Game" :
+                    s.setRoot(new Game().getContainer());
+                    st.sizeToScene();
+                    break;
             }
     }
 
@@ -21,7 +27,8 @@ public class Main extends Application {
     }
     @Override
     public void start(Stage stage) throws Exception {
-        s = new Scene(new Menu().getContainer(),1000,800);
+        st = stage; // set stage
+        s = new Scene(new Menu().getContainer());
         s.getStylesheets().add("assets/styles/menu.css");
         stage.setScene(s);
         stage.show();

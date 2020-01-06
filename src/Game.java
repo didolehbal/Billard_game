@@ -1,13 +1,17 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.scene.Node;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.animation.TranslateTransition;
 import javafx.util.Duration;
 import javafx.scene.input.MouseEvent;
 
-
+import java.util.Timer;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class Game {
@@ -16,76 +20,83 @@ public class Game {
     * */
     Pane container;
     ImageView imgV;
-    Ball white;
-    Dimensions dimensions = new Dimensions(852,426); //according to wiki  2.84 meters by 1.42 meters ratio : 2.84:1.42 => 852 x 426
-    Position mousePosition  = new Position(0,0);
+    BallsManager ballManager;
+    ConstrolStick stick;
+    static double WIDTH = 852 , HEIGHT = 426;  //according to wiki  2.84 meters by 1.42 meters ratio : 2.84:1.42 => 852 x 426
+    Dimensions dimensions = new Dimensions(852,426);
+    PVector mousePosition  = new PVector(0,0);
+    boolean isgameOver = false;
+    long MAX_POWER = 2000;
     public Game(){
         container = new Pane();
-        white = new Ball(100,150);
+        ballManager = new BallsManager(container);
+        stick = new ConstrolStick(container);
     }
-    public void move(Node n,int duration, int x, int y){
-        //Creating Translate Transition
-        TranslateTransition translateTransition = new TranslateTransition();
-
-        //Setting the duration of the transition
-        translateTransition.setDuration(Duration.millis(duration));
-
-        //Setting the node for the transition
-        translateTransition.setNode(n);
-        //Setting the value of the transition along the x axis.
-        translateTransition.setByX(x);
-        translateTransition.setByY(y);
-
-        //Setting the cycle count for the transition
-        translateTransition.setCycleCount(1);
-
-        //Setting auto reverse value to false
-        translateTransition.setAutoReverse(false);
-
-        //Playing the animation
-        translateTransition.play();
-    }
-    public void moveMe(Event e){
-        //Creating Translate Transition
-        TranslateTransition translateTransition = new TranslateTransition();
-
-        //Setting the duration of the transition
-        translateTransition.setDuration(Duration.millis(2000));
-
-        //Setting the node for the transition
-        translateTransition.setNode(white.getImage());
-        //Setting the value of the transition along the x axis.
-        double to = getF(mousePosition,white.pos,50);
 
 
 
-        //Setting the cycle count for the transition
-        translateTransition.setCycleCount(1);
-
-        //Setting auto reverse value to false
-        translateTransition.setAutoReverse(false);
-
-        //Playing the animation
-        translateTransition.play();
-    }
-    public double getF(Position one, Position two, double distance ){
-        //distance dayrha ha 3la axis de x
-        System.out.println(one + "and " + two);
-        System.out.println("x:"+(two.x+distance)+" y:"+ (one.y + ((two.y - one.y)/(two.x - one.x))*(two.x+distance - one.x)));
-        return  one.y + ((two.y - one.y)/(two.x - one.x))*(distance - one.x);
-    }
     public void updateMousePosition(MouseEvent e) {
-        mousePosition = new Position(e.getX(),e.getY());
+        mousePosition = new PVector(e.getX(),e.getY());
+        stick.RotateStick(e.getX(),e.getY());
+    }
+    public void manageMouseclick(){
+        AtomicLong startTime = new AtomicLong();
+        container.setOnMousePressed(e->{
+            startTime.set(System.currentTimeMillis());
+
+
+        });
+        container.setOnMouseReleased(e->{
+            long pressed = System.currentTimeMillis() - startTime.get();
+            if(pressed > MAX_POWER)
+                pressed = MAX_POWER;
+            ballManager.MouseClick(mousePosition, pressed);
+
+        });
     }
     public Pane getContainer(){
         imgV = new ImageView(new Image("assets/images/game-3.png"));
-        container.setOnMouseClicked(e -> moveMe(e));
+      //  container.setOnMouseClicked(e -> moveMe(e));
+        manageMouseclick();
         container.setOnMouseMoved(e -> updateMousePosition(e));
         imgV.toBack();
         imgV.setFitWidth(dimensions.width);
         imgV.setFitHeight(dimensions.height);
-        container.getChildren().addAll(imgV, white.getImage());
+        container.getChildren().add(imgV);
+
+        ballManager.drawBalls();
+        stick.drawStick();
+        Ball white = ballManager.balls[15];
+        stick.white = white;
+        startTheGame();
+
         return container;
+    }
+
+    private void startTheGame(){
+        Timeline gameLoop = new Timeline();
+        gameLoop.setCycleCount( Timeline.INDEFINITE );
+        KeyFrame kf = new KeyFrame(
+                Duration.seconds(0.030),                // 60 FPS
+                new EventHandler<ActionEvent>()
+                {
+                    public void handle(ActionEvent ae)
+                    {
+                        if(!isgameOver) {
+                          // update ball
+                            ballManager.checkEdges();
+                            ballManager.checkCollisions();
+                            ballManager.updateBallsPositions();
+
+                            stick.update();
+                        }
+                        // else show msg end
+                    }
+                });
+
+        gameLoop.getKeyFrames().add( kf );
+        gameLoop.play();
+
     }
     class Dimensions {
         public double width;
@@ -104,20 +115,4 @@ public class Game {
         }
     }
 
-}
-class Position {
-    public double x;
-    public double y;
-    Position(double x, double y){
-        this.x = x;
-        this.y = y;
-    }
-
-    @Override
-    public String toString() {
-        return "Position{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
-    }
 }

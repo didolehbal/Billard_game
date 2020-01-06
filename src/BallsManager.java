@@ -1,21 +1,12 @@
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.transform.Rotate;
-
-import java.util.ArrayList;
 
 public class BallsManager {
     Ball [] balls = new Ball[16];
-    PVector pos;
     Pane container;
-    PVector acceleration;
     BallsManager(Pane container){
         this.container = container;
         Ball white = new Ball(150,Game.HEIGHT/2 , "assets/images/cueball.png", Color.ANTIQUEWHITE);
-        Ball test = new Ball(350,Game.HEIGHT/2 , "assets/images/cueball.png", Color.ANTIQUEWHITE);
         String[] imageName ={
                 "assets/images/one.png","assets/images/two.png","assets/images/three.png","assets/images/four.png",
                 "assets/images/five.png","assets/images/six.png","assets/images/seven.png","assets/images/eight.png",
@@ -25,8 +16,6 @@ public class BallsManager {
         int c = 0;
         double r = 21;
         double variable;
-                   /*1st 8 solidball including 8ball,last 8 stripball including cue ball   */
-
         for (int i = 1; i <= 5; i++) {
             int v = 0;
             for (int j = 1; j <= i; j++) {
@@ -68,10 +57,9 @@ public class BallsManager {
         for(Ball b : balls){
             b.ballid = ++i;
         }
-        //balls[14] = test;
     }
 
-    void MouseClick (PVector mousePos,long pressed){
+    void fireWhiteBall(PVector mousePos, long pressed){
         Ball white = balls[15];
         if(white.velocity.magnitude() > 0 ) // ball already moving
             return;
@@ -87,13 +75,11 @@ public class BallsManager {
         }
     }
     public void updateBallsPositions() {
-        for(Ball b : balls){
+        for(Ball b : balls)
             if(b != null)
                 b.move();
-        }
-
     }
-    public void checkEdges() {
+    public void checkWallCollisions() {
         for(Ball b : balls){
             if(b != null){
                     if(b.getX() > 800 || b.getX() < 50){
@@ -108,8 +94,7 @@ public class BallsManager {
     private PVector  rotate(PVector velocity, double angle) {
     return new PVector(velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle));
     }
-
-    public void checkCollisions() {
+    public void checkBallsCollisions() {
         for(Ball b1 : balls){
                 if(b1 != null)
                 for(Ball b2 : balls){

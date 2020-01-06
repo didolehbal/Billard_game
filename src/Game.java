@@ -26,7 +26,10 @@ public class Game {
     Dimensions dimensions = new Dimensions(852,426);
     PVector mousePosition  = new PVector(0,0);
     boolean isgameOver = false;
-    long MAX_POWER = 2000;
+    static long MAX_POWER = 2000;
+    boolean isMousePressed = true;
+    AtomicLong MousePressedTime = new AtomicLong();
+
     public Game(){
         container = new Pane();
         ballManager = new BallsManager(container);
@@ -40,14 +43,14 @@ public class Game {
         stick.RotateStick(e.getX(),e.getY());
     }
     public void manageMouseclick(){
-        AtomicLong startTime = new AtomicLong();
         container.setOnMousePressed(e->{
-            startTime.set(System.currentTimeMillis());
-
+            MousePressedTime.set(System.currentTimeMillis());
+            isMousePressed = true;
 
         });
         container.setOnMouseReleased(e->{
-            long pressed = System.currentTimeMillis() - startTime.get();
+            isMousePressed = false;
+            long pressed = System.currentTimeMillis() - MousePressedTime.get();
             if(pressed > MAX_POWER)
                 pressed = MAX_POWER;
             ballManager.MouseClick(mousePosition, pressed);
@@ -83,12 +86,13 @@ public class Game {
                     public void handle(ActionEvent ae)
                     {
                         if(!isgameOver) {
-                          // update ball
+                            stick.update(isMousePressed,mousePosition,MousePressedTime.get());
+                            // update ball
                             ballManager.checkEdges();
                             ballManager.checkCollisions();
-                            ballManager.updateBallsPositions();
+                            if(stick.value == 0)
+                                ballManager.updateBallsPositions();
 
-                            stick.update();
                         }
                         // else show msg end
                     }

@@ -30,7 +30,6 @@ public class ConstrolStick {
     public double Initial_v;
     double value=0;
     boolean flagAngle=true;
-    //CreateScrollbar scrollbar;
     Circle sc;
     public Rectangle line;
     boolean isHidden = false;
@@ -63,8 +62,24 @@ public class ConstrolStick {
     }
 
 
-    void update(){
-        if(white.velocity.magnitude() > 0){ // ball is moving
+    void update(boolean isMousePressed, PVector mousePos, long timePressed){
+        timePressed =  System.currentTimeMillis() - timePressed;
+        if(timePressed > Game.MAX_POWER)
+            timePressed = Game.MAX_POWER;
+       if(isMousePressed){
+           if(value < timePressed/20){
+               value +=2;
+           }
+       }else{
+           if(value > 0)
+            value -=5;
+           if(value < 0)
+               value = 0 ;
+       }
+        PVector p = PVector.subs(new PVector(white.getX(),white.getY()),mousePos);
+        MoveStick(p.x,p.y);
+
+        if(white.velocity.magnitude() > 0 && value == 0){ // ball is moving
             hide();
         }
         else {

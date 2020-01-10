@@ -1,14 +1,9 @@
-import javafx.application.Application;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
-import java.awt.*;
 
 public class Menu {
 
@@ -64,74 +59,3 @@ public class Menu {
 
 
 }
-/*import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.scene.*;
-import javafx.scene.image.*;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.stage.Stage;
-import javafx.animation.RotateTransition;
-import javafx.util.Duration;
-
-public class Menu extends Application {
-	StackPane root;
-	Scene scene;
-
-	ImageView imgV;
-	ImageView imgBallWhite;
-	public  void start(Stage window)throws Exception {
-		root = new StackPane();
-		scene = new Scene(root,1000,800);
-		
-		//bill = new Rectangle(600,300);
-		//bill.setId("billboard");
-		HBox container = new HBox();
-		imgV = new ImageView(new Image("assets/game-3.png"));
-
-		//imgV.setX(150);
-		//imgV.setY(150);
-		imgBallWhite = new ImageView(new Image("assets/ball_white.png"));
-		imgBallWhite.setFitWidth(20);
-		imgBallWhite.setPreserveRatio(true);
-		imgBallWhite.setX(200);
-		imgBallWhite.setY(200);
-		imgBallWhite.toFront();
-		imgV.toBack();
-		RotateTransition rotateTransition = new RotateTransition();
-		rotateTransition.setDuration(Duration.millis(50));
-		rotateTransition.setNode(imgBallWhite);
-		//Setting the angle of the rotation
-		rotateTransition.setByAngle(90);
-
-		//Setting the cycle count for the transition
-		rotateTransition.setCycleCount(50);
-
-		//Setting auto reverse value to false
-		rotateTransition.setAutoReverse(false);
-
-		//Playing the animation
-
-
-		root.getChildren().addAll(imgV,imgBallWhite);
-		EventHandler<MouseEvent> eventHandler =
-				new EventHandler<javafx.scene.input.MouseEvent>() {
-
-					@Override
-					public void handle(javafx.scene.input.MouseEvent e) {
-						rotateTransition.play();
-					}
-				};
-		root.addEventHandler(MouseEvent.MOUSE_CLICKED,eventHandler);
-		scene.getStylesheets().add("assets/styles/style.css");
-		window.setScene(scene);
-		window.show();
-	}
-	public void animateBall(){
-		imgBallWhite.setStyle("-fx-rotate: 90;");
-	}
-	public static void main(String args []) {
-		  Application.launch(args);
-	  }
-}
-*/

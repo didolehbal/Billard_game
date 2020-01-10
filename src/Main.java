@@ -2,8 +2,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-
 public class Main extends Application {
     public static Scene s;
     public static Stage st;
@@ -15,8 +13,11 @@ public class Main extends Application {
                     st.sizeToScene(); //resize the stage to fit the scene
                     break;
                 case "Game" :
-                    s.setRoot(new Game().getContainer());
+                    s.setRoot(new Game().getGameContainer());
+                    st.setHeight(Game.WINDOW_HEIGHT);
+                    st.setWidth(Game.WINDOW_WIDTH);
                     st.sizeToScene();
+                    st.setResizable(false);
                     break;
             }
     }
@@ -30,6 +31,7 @@ public class Main extends Application {
         st = stage; // set stage
         s = new Scene(new Menu().getContainer());
         s.getStylesheets().add("assets/styles/menu.css");
+        s.getStylesheets().add("assets/styles/header.css");
         stage.setScene(s);
         stage.show();
     }

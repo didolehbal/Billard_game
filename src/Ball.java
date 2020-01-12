@@ -13,7 +13,7 @@ public class Ball {
     PVector velocity = new PVector(0,0);
     double power = 0;
     private boolean isHidden = false;
-    int ballid;
+    int ballid = -1;
     boolean isFalling = false;
     Ball( double x, double y, String imageName, Color color, BallsManager ballsManager) {
         sphere.setLayoutX(x);
@@ -62,8 +62,8 @@ public class Ball {
 
     void addBallToPlayerScore(){
         if(ballid == 15) {
-            System.out.println(ballid);
             PlayerManager.switchturn();
+            return;
         }
         if (ballid >= 0 && ballid <= 6) {
             Player firstPlayer  = PlayerManager.players.get(0);

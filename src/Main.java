@@ -11,6 +11,7 @@ public class Main extends Application {
                 case "Menu" :
                     s.setRoot(new Menu().getContainer());
                     st.sizeToScene(); //resize the stage to fit the scene
+                    st.setResizable(false);
                     break;
                 case "Game" :
                     s.setRoot(new Game().getGameContainer());
@@ -33,6 +34,7 @@ public class Main extends Application {
         s.getStylesheets().add("assets/styles/menu.css");
         s.getStylesheets().add("assets/styles/header.css");
         stage.setScene(s);
+        stage.setResizable(false);
         stage.show();
     }
 }

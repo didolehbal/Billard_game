@@ -19,11 +19,13 @@ public class PlayerManager{
         }
         return null;
     }
+
     static void switchturn(){
         System.out.println("done");
         players.get(0).hasTurn = players.get(1).hasTurn;
         players.get(1).hasTurn = !players.get(0).hasTurn;
     }
+
 }
  class Player {
     String name;
@@ -36,11 +38,22 @@ public class PlayerManager{
         for(int i=0; i<7 ; i++) balls.add(new Ball());
         playerBallsView = new HBox();
     }
+    boolean hasPocketedAllHisBalls(){
+        for(Ball b : balls)
+            if(b.ballid == -1)
+                return false;
+        return true;
+    }
+
     static void pushBall(Player p ,Ball b){
         if(b.ballid == 16) return; // white ball
         Ball bRemoved = p.balls.remove();
         p.balls.add(b);
         p.playerBallsView.getChildren().remove(bRemoved.sphere);
         p.playerBallsView.getChildren().add(b.sphere);
+
+        if(p.hasPocketedAllHisBalls()){
+
+        }
     }
 }

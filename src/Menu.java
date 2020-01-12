@@ -1,9 +1,10 @@
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+
+import javafx.scene.layout.*;
+
 
 public class Menu {
 
@@ -13,7 +14,7 @@ public class Menu {
 	private Label lblWelcome;
 	private HBox row;
 	private VBox column;
-
+	final private double WIDTH=800,HEIGHT=500;
 	public Menu(){
 		initUILayout();
 		initUIStyle();
@@ -22,7 +23,17 @@ public class Menu {
 	public void initUILayout(){
 
 		container = new BorderPane();
+		Image image = new Image("assets/images/billard.jpg");
 
+		BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true);
+
+		Background background = new Background(new BackgroundImage(image,
+				BackgroundRepeat.NO_REPEAT,
+				BackgroundRepeat.NO_REPEAT,
+				BackgroundPosition.CENTER,
+				bSize));
+		container.setBackground(background);
+		container.setPrefSize(WIDTH, HEIGHT);
 		btnPvP = new Button("Player vs Player");
 		btnPvC = new Button("Player vs Co");
 		lblWelcome = new Label("Welcome to Billard Game");
@@ -48,7 +59,6 @@ public class Menu {
 	}
 	public void initEvents(){
 		btnPvP.setOnMouseClicked(e -> {
-
 			Main.activate("Game");
 		});
 	}

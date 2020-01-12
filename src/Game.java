@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -49,7 +50,15 @@ public class Game {
         });
 
     }
+    public void manageKeysPress(){
+        gameContainer.setOnKeyPressed(e ->{
+            System.out.println("pressed : "+ e.getCharacter());
+        });
+    }
     public void manageMouseclick(){
+        gameContainer.addEventFilter(KeyEvent.KEY_PRESSED,
+                event -> System.out.println("Pressed: " + event.getCode()));
+
         gameContainer.setOnMouseClicked(e->{
             System.out.println(mousePosition);
             if(e.getButton() == MouseButton.SECONDARY){ // cancel shooting
@@ -126,6 +135,7 @@ public class Game {
         stick.drawStick();
         startTheGame();
         manageMouseclick();
+        manageKeysPress();
         updateMousePosition();
         root.setCenter(gameContainer);
 

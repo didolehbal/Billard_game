@@ -1,20 +1,33 @@
 .btn{
-    -fx-text-fill: #006464;
-    -fx-background-color: #DFB951;
+    -fx-text-fill: white;
+    -fx-background-color: grey;
     -fx-border-radius: 20;
     -fx-background-radius: 20;
     -fx-padding: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 18;
+    -fx-font-family: aakar;
+    -fx-max-width: 150px;
+    -fx-min-width: 150px;
 }
-
+.btn:hover{
+    -fx-background-color: lightgrey;
+    -fx-text-fill: black;
+}
 .container{
-    -fx-background-color: red;
+
     -fx-min-width: 100%;
     -fx-min-height: 100%;
 }
 .form-container{
-    -fx-background-color: yellow;
-
+    -fx-spacing: 50px;
 }
 .buttons-container{
-
+    -fx-spacing: 25px;
+}
+.lblWecome{
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-font-size: 26;
+    -fx-font-family: 'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
 }

@@ -15,7 +15,7 @@ public class BallsManager {
     static boolean hasScored = false;
     Circle holes[] = new Circle[6];
     //final static PVector INITIAL_WHITE_POS = new PVector(Game.TABLE_WIDTH/2 - 200, Game.TABLE_HEIGHT/2);
-    final static PVector INITIAL_WHITE_POS = new PVector( 430, 80);
+    final static PVector INITIAL_WHITE_POS = new PVector( 75, 65);
     BallsManager(Pane container){
         this.container = container;
         initHoles();
@@ -44,9 +44,9 @@ public class BallsManager {
                     }
                 } else if (c == 7) {
                     if (i % 2 == 0) {
-                        balls[c] = new Ball( Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.BLACK, this);
+                        balls[c] = new Ball( Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.WHITE, this);
                     } else {
-                        balls[c] = new Ball(Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.BLACK, this);
+                        balls[c] = new Ball(Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.WHITE, this);
                     }
                 } else if (c < 15) {
                     if (i % 2 == 0) {
@@ -119,8 +119,11 @@ public class BallsManager {
                 if(hole == null) continue;
                 double distance = Math.sqrt(Math.pow(b.getX() - hole.getCenterX(), 2) + Math.pow(b.getY() - hole.getCenterY(), 2));
                 if(distance < 18){
-                    if(!b.isFalling)  // to play the sound only when falling starts
+                    if(!b.isFalling){  // to play the sound only when falling starts
                         playBallFallingSound();
+                        b.velocity = PVector.subs(new PVector(hole.getCenterX(),hole.getCenterY()),new PVector(b.getX(),b.getY())); // directing ball toward center of the hole
+                        b.velocity.normalize();
+                    }
                     b.hideWithFadeEffect(container);
                     hasScored= true;
                 }
@@ -136,8 +139,6 @@ public class BallsManager {
 
             if (b.getX() >= 75 && b.getX() < 400) {
                 if ((b.getY() - 50 <= 11)) { // 11 = radius + 1px
-
-                    System.out.println("omg: "+b.getX()+" "+b.velocity);
                     playBallHitWallSound();
                     b.velocity.y = - b.velocity.y;
                     b.setY(b.getY() + 2);// in case its inside the wall
@@ -187,30 +188,33 @@ public class BallsManager {
 
         for (Ball b : balls) {
             if(b.isHidden()) continue;
+
+            if (b.getX() >= 28 && b.getX() < 51) {
+                if (b.getY() - 80 <= 11 ) {
+                    double fi = Math.atan2( 55 - 80,  28 - 50) * 180 / Math.PI;
+                    System.out.println(fi);
+                    b.velocity = getInclinedHitVect(b.velocity,fi);
+                }
+            }
+
             if (b.getX() >= 52 && b.getX() < 75) {
                 if (b.getY() - 50 <= 11 ) {
                     double fi = Math.atan2( 45 - 55,  52 - 75) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
             }
-            if (b.getX() >= 28 && b.getX() < 51) {
-                if (b.getY() - 80 <= 11 ) {
-                    double fi = Math.atan2( 55 - 80,  28 - 50) * 180 / Math.PI;
-                    b.velocity = getInclinedHitVect(b.velocity,fi);
-                }
-            }
+
 
             if (b.getX() >= 400 && b.getX() < 415) {
                 if (b.getY() - 50 <= 11 ) {
-                    double fi = Math.atan2( 50 - 55 , 415 - 400 ) * 180 / Math.PI;
-                    System.out.println(b.velocity);
+                    double fi = Math.atan2( 20 - 55 , 415 - 400 ) * 180 / Math.PI;
+                    System.out.println(fi);
                     b.velocity = getInclinedHitVect(b.velocity,fi);
-                    System.out.println(b.velocity);
                 }
             }
             if (b.getX() > 440 && b.getX() < 455) {
                 if (b.getY() - 50 <= 11 ) {
-                    double fi = Math.atan2( 55 - 50,  440 - 455) * 180 / Math.PI;
+                    double fi = Math.atan2( 55 - 37,  455 - 448) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
             }

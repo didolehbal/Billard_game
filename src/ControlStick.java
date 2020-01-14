@@ -52,6 +52,9 @@ public class ControlStick {
 
     void render(boolean isMousePressed, PVector mousePos, long timePressed){
         if(white.velocity.magnitude() > 0 && translationValue == 0){ // ball is moving
+            if(!isHidden){
+                playStickHitSound();
+            }
             hide();
         }
         else {
@@ -106,7 +109,6 @@ public class ControlStick {
 
     public void  hide(){
        if(!isHidden){
-            playStickHitSound();
             root.getChildren().remove(stick);
             root.getChildren().remove(line);
             isHidden = true;

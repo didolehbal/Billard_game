@@ -15,7 +15,7 @@ public class Ball {
     private boolean isHidden = false;
     int ballid = -1;
     boolean isFalling = false;
-    Ball( double x, double y, String imageName, Color color, BallsManager ballsManager) {
+    Ball( double x, double y, String imageName, Color color) {
         sphere.setLayoutX(x);
         sphere.setLayoutY(y);
         sphere.setRadius(10);
@@ -61,11 +61,12 @@ public class Ball {
     }
 
     void addBallToPlayerScore(){
+
         if(ballid == 15) {
             PlayerManager.switchturn();
             return;
         }
-        if (ballid >= 0 && ballid <= 6) {
+        else if (ballid >= 0 && ballid <= 6) {
             Player firstPlayer  = PlayerManager.players.get(0);
             Player.pushBall(firstPlayer,this);
             if(PlayerManager.getPlayerWithTurn() != firstPlayer)
@@ -76,6 +77,21 @@ public class Ball {
             Player.pushBall(secondPlayer,this);
             if(PlayerManager.getPlayerWithTurn() != secondPlayer)
                 PlayerManager.switchturn();
+        }
+        else if( ballid == 7){
+            Player current = PlayerManager.getPlayerWithTurn();
+            if(current.hasPocketedAllHisBalls()){
+                Player.pushBall(current,this);
+                Game.isGameOver = true;
+                Game.Winner = current;
+            }else{
+                PlayerManager.switchturn();
+                current = PlayerManager.getPlayerWithTurn();
+                Player.pushBall(current,this);
+                Game.isGameOver = true;
+
+                Game.Winner = PlayerManager.getPlayerWithTurn();
+            }
         }
     }
     public boolean isHidden(){

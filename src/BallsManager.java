@@ -13,13 +13,13 @@ public class BallsManager {
     private  AudioClip ballFallingSound;
     static boolean areballsMoving = false;
     static boolean hasScored = false;
-    Circle holes[] = new Circle[6];
-    //final static PVector INITIAL_WHITE_POS = new PVector(Game.TABLE_WIDTH/2 - 200, Game.TABLE_HEIGHT/2);
-    final static PVector INITIAL_WHITE_POS = new PVector( 75, 65);
-    BallsManager(Pane container){
+    final static PVector INITIAL_WHITE_POS = new PVector(Game.TABLE_WIDTH/2 - 200, Game.TABLE_HEIGHT/2);
+    Circle[] holes;
+  //  final static PVector INITIAL_WHITE_POS = new PVector( 425, 65);
+    BallsManager(Pane container, Circle[] holes){
+        this.holes = holes;
         this.container = container;
-        initHoles();
-        Ball white = new Ball(INITIAL_WHITE_POS.x,INITIAL_WHITE_POS.y , "assets/images/cueball.png", Color.ANTIQUEWHITE, this);
+        Ball white = new Ball(INITIAL_WHITE_POS.x,INITIAL_WHITE_POS.y , "assets/images/cueball.png", Color.ANTIQUEWHITE);
         String[] imageName ={
                 "assets/images/one.png","assets/images/two.png","assets/images/three.png","assets/images/four.png",
                 "assets/images/five.png","assets/images/six.png","assets/images/seven.png","assets/images/8ball.png",
@@ -38,21 +38,21 @@ public class BallsManager {
 
                 if (c < 7) {
                     if (i % 2 == 0) {
-                        balls[c] = new Ball( Game.TABLE_WIDTH /2 + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.BROWN,this);
+                        balls[c] = new Ball( Game.TABLE_WIDTH /2 + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.BROWN);
                     } else {
-                        balls[c] = new Ball( Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.BROWN, this);
+                        balls[c] = new Ball( Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.BROWN);
                     }
                 } else if (c == 7) {
                     if (i % 2 == 0) {
-                        balls[c] = new Ball( Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.WHITE, this);
+                        balls[c] = new Ball( Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.WHITE);
                     } else {
-                        balls[c] = new Ball(Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.WHITE, this);
+                        balls[c] = new Ball(Game.TABLE_WIDTH /2  + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.WHITE);
                     }
                 } else if (c < 15) {
                     if (i % 2 == 0) {
-                        balls[c] = new Ball( Game.TABLE_WIDTH /2 + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.DARKBLUE, this);
+                        balls[c] = new Ball( Game.TABLE_WIDTH /2 + r * i, Game.TABLE_HEIGHT /2  + variable + 10 + r * v, imageName[c], Color.DARKBLUE);
                     } else {
-                        balls[c] = new Ball( Game.TABLE_WIDTH /2 + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.DARKBLUE,this);
+                        balls[c] = new Ball( Game.TABLE_WIDTH /2 + r * i, Game.TABLE_HEIGHT /2  + variable + r * v, imageName[c], Color.DARKBLUE);
                     }
                 }
 
@@ -81,8 +81,6 @@ public class BallsManager {
         white.power=pressed;
         white.velocity = PVector.subs(new PVector(white.getX(),white.getY()),mousePos);
         white.velocity.normalize();
-
-
     }
     public void drawBalls(){
         for(Ball b : balls){
@@ -91,20 +89,7 @@ public class BallsManager {
             }
         }
     }
-    public void initHoles(){
-        holes[0] = new Circle(44,45,20);
-        holes[1] = new Circle(428,33,20);
-        holes[2] = new Circle(813,45,20);
-        holes[3] = new Circle(44,440,20);
-        holes[4] = new Circle(428,450,20);
-        holes[5] = new Circle(813,440,20);
-        for(Circle hole : holes){
-            if(hole == null) continue;
-            //hole.setFill(Color.RED); to preview the hole
-            hole.setOpacity(0);
-            container.getChildren().add(hole);
-        }
-    }
+
     public void updateBallsPositions() {
         boolean areballsMoving = false;
         for(Ball b : balls)
@@ -137,7 +122,7 @@ public class BallsManager {
             if(b.isHidden()) continue;
 
 
-            if (b.getX() >= 75 && b.getX() < 400) {
+            if (b.getX() >= 75 && b.getX() < 405) {
                 if ((b.getY() - 50 <= 11)) { // 11 = radius + 1px
                     playBallHitWallSound();
                     b.velocity.y = - b.velocity.y;
@@ -153,7 +138,7 @@ public class BallsManager {
               }
           }
 
-          if (b.getX() >= 75 && b.getX() <= 405) {
+          if (b.getX() >= 75 && b.getX() < 405) {
               if (433 - b.getY() <= 11) { // 11 = radius + 1px
                   playBallHitWallSound();
                   b.velocity.y = - b.velocity.y;
@@ -192,7 +177,6 @@ public class BallsManager {
             if (b.getX() >= 28 && b.getX() < 51) {
                 if (b.getY() - 80 <= 11 ) {
                     double fi = Math.atan2( 55 - 80,  28 - 50) * 180 / Math.PI;
-                    System.out.println(fi);
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
             }
@@ -205,15 +189,15 @@ public class BallsManager {
             }
 
 
-            if (b.getX() >= 400 && b.getX() < 415) {
-                if (b.getY() - 50 <= 11 ) {
-                    double fi = Math.atan2( 20 - 55 , 415 - 400 ) * 180 / Math.PI;
+            if (b.getX() >= 404 && b.getX() < 415) {
+                if (b.getY() - 55 <= 11 ) {
+                    double fi = Math.atan2( 20 - 55 , 415 - 405 ) * 180 / Math.PI;
                     System.out.println(fi);
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
             }
             if (b.getX() > 440 && b.getX() < 455) {
-                if (b.getY() - 50 <= 11 ) {
+                if (b.getY() - 55 <= 11 ) {
                     double fi = Math.atan2( 55 - 37,  455 - 448) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
@@ -355,18 +339,8 @@ public class BallsManager {
                 }
         }
     }
-    public void handlePlayerTurnUI(){
-        for(Player p : PlayerManager.players){
-            if(p.hasTurn){
-                //System.out.println("has " +p);
-                p.playerBallsView.setStyle("-fx-border-width: 2px");
-            }
-            else{
-               // System.out.println("hasnt " +p);
-                p.playerBallsView.setStyle("-fx-border-width: 0px");
-            }
-        }
-    }
+
+
     private PVector getInclinedHitVect(PVector v, double fi){
         double nx = -Math.sin(fi);
         double ny = Math.cos(fi);

@@ -10,7 +10,7 @@ public class Main extends Application {
             switch (name){
                 case "Menu" :
                     s.setRoot(new Menu().getContainer());
-                    st.sizeToScene(); //resize the stage to fit the scene
+                    st.sizeToScene();
                     st.setResizable(false);
                     break;
                 case "Game" :
@@ -24,7 +24,6 @@ public class Main extends Application {
     }
 
     public static void main(String args []) {
-
         Application.launch(args);
     }
     @Override
@@ -33,6 +32,7 @@ public class Main extends Application {
         s = new Scene(new Menu().getContainer());
         s.getStylesheets().add("assets/styles/menu.css");
         s.getStylesheets().add("assets/styles/header.css");
+        s.getStylesheets().add("assets/styles/winBox.css");
         stage.setScene(s);
         stage.setResizable(false);
         stage.show();

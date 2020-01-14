@@ -5,11 +5,10 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
@@ -29,36 +28,69 @@ public class Game {
     static final long MAX_POWER = 2000;
 
     BorderPane root;
+    StackPane stackpane;
     Pane gameContainer;
     ImageView imgV;
+    Pane pauseView;
     Button goback;
-
     static boolean isGameOver = false;
     static Player Winner = null;
 
     boolean isMousePressed = false;
     AtomicLong MousePressedTime = new AtomicLong();
-    Circle holes[] = new Circle[6];
     PVector mousePosition  = new PVector(0,0);
+    Timeline gameLoop;
+    boolean isGamePaused = false;
+    Circle holes[] = new Circle[6];
 
     public Game(){
         root = new BorderPane();
+        stackpane = new StackPane();
         gameContainer = new Pane();
-        ballManager = new BallsManager(gameContainer);
+        ballManager = new BallsManager(gameContainer,holes);
         stick = new ControlStick(gameContainer);
         playerManager = new PlayerManager();
+        pauseView = getPauseContainer();
     }
 
+    public void initHoles(){
+        holes[0] = new Circle(44,45,20);
+        holes[1] = new Circle(428,33,20);
+        holes[2] = new Circle(813,45,20);
+        holes[3] = new Circle(44,440,20);
+        holes[4] = new Circle(428,450,20);
+        holes[5] = new Circle(813,440,20);
+        for(Circle hole : holes){
+            if(hole == null) continue;
+            //hole.setFill(Color.RED); to preview the hole
+            hole.setOpacity(0);
+            gameContainer.getChildren().add(hole);
+        }
+    }
 
-
+    private void endGame(){
+        Ball black = null;
+        for(Ball b : ballManager.balls){
+            if(b.ballid > 7)
+                b.addBallToPlayerScore();
+            if(b.ballid == 7)
+                black = b;
+        }
+        if(black != null)
+            black.addBallToPlayerScore();
+    }
     public void manageEvents(){
+        gameContainer.setFocusTraversable(true);
+        gameContainer.setOnKeyPressed(e-> {
+                if (e.getCode().equals(KeyCode.P)) {
+                    toggleGamePauseStop();
+                }
+                else if(e.getCode().equals(KeyCode.ESCAPE))
+                    endGame();
+        });
         gameContainer.setOnMouseMoved(e -> {
             mousePosition = new PVector(e.getX(),e.getY());
             stick.RotateStick(e.getX(),e.getY());
-        });
-        gameContainer.setOnScroll(e-> {
-                    isGameOver=true;
-                    Winner=PlayerManager.getPlayerWithTurn();
         });
         gameContainer.setOnMouseClicked(e->{
             System.out.println(mousePosition);
@@ -84,6 +116,8 @@ public class Game {
                 ballManager.fireWhiteBall(mousePosition, pressed);
             }
         });
+
+
     }
     public HBox getHeader(){
         HBox head = new HBox();
@@ -130,16 +164,25 @@ public class Game {
             Label lbl = new Label(Winner.name + " Has Won !");
             lbl.getStyleClass().add("lbl-win");
 
-             goback = new Button("Go to Menu");
+            goback = new Button("Go to Menu");
             goback.getStyleClass().add("btn");
             goback.setOnMouseClicked(e->{
-                System.out.println("click");
                 Main.activate("Menu");
             });
             vb.getChildren().addAll(lbl,goback);
             return vb;
         }
         return null;
+    }
+    public Pane getPauseContainer(){
+            VBox vb = new VBox();
+            vb.getStyleClass().add("box-win");
+
+            Label lbl = new Label("Game Paused !");
+            lbl.getStyleClass().add("lbl-win");
+
+            vb.getChildren().addAll(lbl);
+            return vb;
     }
     public Pane getGameContainer(){
         imgV = new ImageView("assets/images/game-3.png");
@@ -157,16 +200,30 @@ public class Game {
         Ball white = ballManager.balls[15];
         stick.white = white;
         stick.drawStick();
+        initHoles();
         startTheGame();
         manageEvents();
-        root.setCenter(gameContainer);
+        stackpane.getChildren().add(gameContainer);
+        root.setCenter(stackpane);
 
         root.setTop(getHeader());
         return root;
     }
 
+    void toggleGamePauseStop(){
+        if(!isGamePaused){
+            gameLoop.pause();
+            isGamePaused=true;
+            stackpane.getChildren().add(pauseView);
+        }
+        else{
+            gameLoop.play();
+            isGamePaused=false;
+            stackpane.getChildren().remove(pauseView);
+        }
+    }
     private void startTheGame(){
-        Timeline gameLoop = new Timeline();
+        gameLoop = new Timeline();
         gameLoop.setCycleCount( Timeline.INDEFINITE );
         KeyFrame kf = new KeyFrame(
                 Duration.seconds(0.030),                // 60 FPS
@@ -174,7 +231,7 @@ public class Game {
                 {
                     public void handle(ActionEvent ae)
                     {
-                        if(!isGameOver) {
+                         if(!isGameOver) {
                             stick.render(isMousePressed,mousePosition,MousePressedTime.get());
                             // update ball
                             ballManager.handleHoleCollisions();
@@ -182,15 +239,15 @@ public class Game {
                             ballManager.handleBallsCollisions();
                             ballManager.handleWhiteBallFall();
                             ballManager.handleEdgesCollisions();
-                            ballManager.handlePlayerTurnUI();
+                            playerManager.handlePlayerTurnUI();
                             if(stick.translationValue == 0)
                                 ballManager.updateBallsPositions();
                         }
                         else {
                             gameLoop.stop();
                             stick.hide();
-                            root.setTop(null);
-                            root.setCenter(getWinContainer());
+                            Pane  p = getWinContainer();
+                            stackpane.getChildren().add(p);
                         }
                         // else show msg end
                     }

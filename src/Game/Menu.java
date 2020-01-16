@@ -1,3 +1,5 @@
+package Game;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,8 +11,8 @@ import javafx.scene.layout.*;
 public class Menu {
 
 	private BorderPane container;
-	private Button btnPvP;
-	private Button btnPvC;
+	private Button btnOffline;
+	private Button btnOnline;
 	private Label lblWelcome;
 	private HBox row;
 	private VBox column;
@@ -34,13 +36,13 @@ public class Menu {
 				bSize));
 		container.setBackground(background);
 		container.setPrefSize(WIDTH, HEIGHT);
-		btnPvP = new Button("Player vs Player");
-		btnPvC = new Button("Player vs Co");
+		btnOffline = new Button("Play Offline");
+		btnOnline = new Button("Play Online");
 		lblWelcome = new Label("Welcome to Billard Game");
 
 		row = new HBox();
 		row.setAlignment(Pos.CENTER);
-		row.getChildren().addAll(btnPvP,btnPvC);
+		row.getChildren().addAll(btnOffline, btnOnline);
 
 		column = new VBox();
 		column.setAlignment(Pos.CENTER);
@@ -53,13 +55,16 @@ public class Menu {
 		container.getStyleClass().add("container");
 		row.getStyleClass().add("buttons-container");
 		column.getStyleClass().add("form-container");
-		btnPvP.getStyleClass().addAll("btn","pvp");
-		btnPvC.getStyleClass().addAll("btn","pvc");
+		btnOffline.getStyleClass().addAll("btn","pvp");
+		btnOnline.getStyleClass().addAll("btn","pvc");
 		lblWelcome.getStyleClass().add("lblWecome");
 	}
 	public void initEvents(){
-		btnPvP.setOnMouseClicked(e -> {
-			Main.activate("Game");
+		btnOffline.setOnMouseClicked(e -> {
+			Main.activate(Main.OFFLINE);
+		});
+		btnOnline.setOnMouseClicked(e ->{
+			Main.activate(Main.ONLINE);
 		});
 	}
 

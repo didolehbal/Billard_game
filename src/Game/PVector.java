@@ -1,9 +1,13 @@
-public class PVector {
+package Game;
+
+import java.io.Serializable;
+
+public class PVector implements Serializable {
 
     public double x;
     public double y;
 
-    PVector(double x, double y){
+   public PVector(double x, double y){
         this.x = x;
         this.y = y;
     }

@@ -4,6 +4,17 @@
     -fx-text-fill: white;
 }
 .box-win{
+    -fx-background-color: rgba(150,150,150,0.7);
     -fx-alignment: center;
     -fx-spacing: 20px;
+}
+.box-pause{
+    -fx-background-color: rgba(173,216,230,0.5);
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+}
+.queue-box{
+    -fx-background-color: rgba(173,216,230,1);
+    -fx-alignment: center;
+
 }

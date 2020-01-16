@@ -1,17 +1,15 @@
-import javafx.scene.layout.HBox;
+package Game;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class PlayerManager{
-    static ArrayList<Player> players ;
+   public static ArrayList<Player> players ;
     PlayerManager(){
         players = new ArrayList<Player>();
-        Player p = new Player("Player 1");
+        Player p = new Player("first Player");
         p.hasTurn = true;
         players.add(p);
-        players.add(new Player("Player 2"));
+        players.add(new Player("seconde Player"));
     }
     static Player getPlayerWithTurn(){
         for(Player p : players){
@@ -36,5 +34,4 @@ public class PlayerManager{
             }
         }
     }
-
 }

@@ -1,3 +1,5 @@
+package Game;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
@@ -15,7 +17,7 @@ public class BallsManager {
     static boolean hasScored = false;
     final static PVector INITIAL_WHITE_POS = new PVector(Game.TABLE_WIDTH/2 - 200, Game.TABLE_HEIGHT/2);
     Circle[] holes;
-  //  final static PVector INITIAL_WHITE_POS = new PVector( 425, 65);
+     //public final static PVector INITIAL_WHITE_POS = new PVector( 795, 65);
     BallsManager(Pane container, Circle[] holes){
         this.holes = holes;
         this.container = container;
@@ -76,10 +78,12 @@ public class BallsManager {
     void fireWhiteBall(PVector mousePos, long pressed){
         hasScored = false;
         Ball white = balls[15];
-        if(white.power > 0 ) // ball already moving
+        if(white.power > 0 || white.isHandled ) // ball already moving
             return;
         white.power=pressed;
         white.velocity = PVector.subs(new PVector(white.getX(),white.getY()),mousePos);
+        System.out.println(mousePos);
+        System.out.println(white.velocity);
         white.velocity.normalize();
     }
     public void drawBalls(){
@@ -99,7 +103,7 @@ public class BallsManager {
     }
     public void handleHoleCollisions() {
         for(Ball b : balls){
-            if(b.isHidden()) continue;
+            if(b.isHidden() || b.isHandled) continue;
             for(Circle hole : holes){
                 if(hole == null) continue;
                 double distance = Math.sqrt(Math.pow(b.getX() - hole.getCenterX(), 2) + Math.pow(b.getY() - hole.getCenterY(), 2));
@@ -176,6 +180,7 @@ public class BallsManager {
 
             if (b.getX() >= 28 && b.getX() < 51) {
                 if (b.getY() - 80 <= 11 ) {
+                    System.out.println("edge 1");
                     double fi = Math.atan2( 55 - 80,  28 - 50) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
@@ -183,6 +188,7 @@ public class BallsManager {
 
             if (b.getX() >= 52 && b.getX() < 75) {
                 if (b.getY() - 50 <= 11 ) {
+                    System.out.println("edge 2");
                     double fi = Math.atan2( 45 - 55,  52 - 75) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
@@ -191,6 +197,7 @@ public class BallsManager {
 
             if (b.getX() >= 404 && b.getX() < 415) {
                 if (b.getY() - 55 <= 11 ) {
+                    System.out.println("edge 3");
                     double fi = Math.atan2( 20 - 55 , 415 - 405 ) * 180 / Math.PI;
                     System.out.println(fi);
                     b.velocity = getInclinedHitVect(b.velocity,fi);
@@ -198,7 +205,23 @@ public class BallsManager {
             }
             if (b.getX() > 440 && b.getX() < 455) {
                 if (b.getY() - 55 <= 11 ) {
-                    double fi = Math.atan2( 55 - 37,  455 - 448) * 180 / Math.PI;
+                    System.out.println("edge 4");
+                    double fi = Math.atan2( 37 - 55,   448 - 455) * 180 / Math.PI;
+                    b.velocity = getInclinedHitVect(b.velocity,fi);
+                }
+            }
+
+            if (b.getX() > 780 && b.getX() < 797) {
+                if (b.getY() - 45 <= 11 ) {
+                    System.out.println("edge 5");
+                    double fi = Math.atan2( 39 - 55 , 797 - 780 ) * 180 / Math.PI;
+                    b.velocity = getInclinedHitVect(b.velocity,fi);
+                }
+            }
+            if (b.getX() > 805 && b.getX() < 825) {
+                if (b.getY() - 80 <= 11 ) {
+                    System.out.println("edge 6");
+                    double fi = Math.atan2( 63 - 80,   825 - 805) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
             }
@@ -352,12 +375,7 @@ public class BallsManager {
     private PVector rotate(PVector velocity, double angle) {
         return new PVector(velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle));
     }
-    public void handleWhiteBallFall(){
-        Ball white = balls[15];
-        if(white.isHidden()){
-            white.show(container);
-        }
-    }
+
     private void initSounds(){
         String hitfile = "src/assets/sounds/HitSideTable.mp3";
         hitSideTableSound = new AudioClip(new File(hitfile).toURI().toString());

@@ -1,3 +1,5 @@
+package Game;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -6,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
@@ -22,20 +23,19 @@ public class Game {
 
 
 
-    static final double TABLE_WIDTH = 852 , TABLE_HEIGHT = 485;  //according to wiki  2.84 meters by 1.42 meters ratio : 2.84:1.42 => 852 x 426
-    static final double HEAD_WIDTH=852,HEAD_HEIGHT=75;
-    static final double WINDOW_WIDTH = Math.max(TABLE_WIDTH , HEAD_WIDTH), WINDOW_HEIGHT = TABLE_HEIGHT + HEAD_HEIGHT;
-    static final long MAX_POWER = 2000;
+    public static final double TABLE_WIDTH = 852 , TABLE_HEIGHT = 485;  //according to wiki  2.84 meters by 1.42 meters ratio : 2.84:1.42 => 852 x 426
+    public static final double HEAD_WIDTH=852,HEAD_HEIGHT=75;
+    public static final double WINDOW_WIDTH = Math.max(TABLE_WIDTH , HEAD_WIDTH), WINDOW_HEIGHT = TABLE_HEIGHT + HEAD_HEIGHT;
+    public static final long MAX_POWER = 2000;
 
-    BorderPane root;
-    StackPane stackpane;
-    Pane gameContainer;
+    protected BorderPane root;
+    public StackPane stackpane;
+    protected Pane gameContainer;
     ImageView imgV;
     Pane pauseView;
     Button goback;
     static boolean isGameOver = false;
     static Player Winner = null;
-
     boolean isMousePressed = false;
     AtomicLong MousePressedTime = new AtomicLong();
     PVector mousePosition  = new PVector(0,0);
@@ -43,6 +43,7 @@ public class Game {
     boolean isGamePaused = false;
     Circle holes[] = new Circle[6];
 
+    protected Label names[] = new Label[2];
     public Game(){
         root = new BorderPane();
         stackpane = new StackPane();
@@ -79,6 +80,77 @@ public class Game {
         if(black != null)
             black.addBallToPlayerScore();
     }
+    protected  void updateMousePosition(double x, double y){
+        mousePosition = new PVector(x,y);
+        stick.RotateStick(x,y);
+    }
+    protected  void prepareShooting(){
+            MousePressedTime.set(System.currentTimeMillis());
+            isMousePressed = true;
+    }
+    protected long startShooting(){
+        long pressed = System.currentTimeMillis() - MousePressedTime.get();
+        shootBall(pressed);
+        return pressed;
+    }
+
+    public void handleWhiteBallFall(){
+        Ball white = ballManager.balls[15];
+        if(white.isHidden()){
+
+            gameContainer.getChildren().add(white.sphere);
+            gameContainer.setStyle("-fx-cursor: move");
+
+            white.setX(BallsManager.INITIAL_WHITE_POS.x);
+            white.setY(BallsManager.INITIAL_WHITE_POS.y);
+            white.power = 0;
+            white.velocity = new PVector(0,0);
+            white.setHidden( false);
+            white.isFalling = false;
+            white.isHandled = true;
+        }
+        if(white.isHandled){
+            if(mousePosition.x > 61 && mousePosition.x < TABLE_WIDTH -61 && mousePosition.y >61 && mousePosition.y < TABLE_HEIGHT-61){ // check if collision with ball walls
+                boolean noObstacles=true;
+                for(Ball b2 : ballManager.balls){ //check if collision with a ball
+                    if(b2 == null || white.ballid == b2.ballid || b2.isHidden()) continue;
+
+                    double xDist = b2.getX() - mousePosition.x;
+                    double yDist = b2.getY() - mousePosition.y;
+                    double distance = Math.sqrt(xDist * xDist + yDist * yDist) ;
+                    if (distance <= 20 ) {
+                        noObstacles=false;
+                    }
+                }
+                if(noObstacles){
+                    white.setX(mousePosition.x);
+                    white.setY(mousePosition.y);
+                }
+            }
+        }
+    }
+    protected void shootBall(long power){
+        isMousePressed = false;
+        if(power > MAX_POWER)
+            power = MAX_POWER;
+        ballManager.fireWhiteBall(mousePosition, power);
+    }
+    protected void cancelShooting(){
+        isMousePressed = false;
+        stick.translationValue = 0;
+    }
+    protected void quit(){
+        isGameOver= true;
+        Main.activate(Main.MENU);
+
+    }
+    public void setWhitePosition(){
+        Ball white = ballManager.balls[15];
+        if(white.isHandled){
+            white.isHandled = false;
+            gameContainer.setStyle("-fx-cursor: hand");
+        }
+    }
     public void manageEvents(){
         gameContainer.setFocusTraversable(true);
         gameContainer.setOnKeyPressed(e-> {
@@ -86,34 +158,34 @@ public class Game {
                     toggleGamePauseStop();
                 }
                 else if(e.getCode().equals(KeyCode.ESCAPE))
-                    endGame();
+                {
+                   quit();
+                }
         });
         gameContainer.setOnMouseMoved(e -> {
-            mousePosition = new PVector(e.getX(),e.getY());
-            stick.RotateStick(e.getX(),e.getY());
+            updateMousePosition( e.getX(),e.getY());
         });
         gameContainer.setOnMouseClicked(e->{
             System.out.println(mousePosition);
             if(e.getButton() == MouseButton.SECONDARY){ // cancel shooting
-                isMousePressed = false;
-                stick.translationValue = 0;
+                cancelShooting();
+            }
+            if(e.getButton() == MouseButton.PRIMARY){ // put white ball on board
+                setWhitePosition();
             }
         });
         gameContainer.setOnMousePressed(e->{
             if(e.getButton() == MouseButton.PRIMARY){ // prepare shooting
-                MousePressedTime.set(System.currentTimeMillis());
-                isMousePressed = true;
+                Ball white = ballManager.balls[15];
+                if(!white.isHandled)
+                    prepareShooting();
             }
-
-
         });
         gameContainer.setOnMouseReleased(e->{
             if(isMousePressed && e.getButton() == MouseButton.PRIMARY){ // shoot
-                isMousePressed = false;
-                long pressed = System.currentTimeMillis() - MousePressedTime.get();
-                if(pressed > MAX_POWER)
-                    pressed = MAX_POWER;
-                ballManager.fireWhiteBall(mousePosition, pressed);
+                Ball white = ballManager.balls[15];
+                if(!white.isHandled)
+                    startShooting();
             }
         });
 
@@ -123,16 +195,16 @@ public class Game {
         HBox head = new HBox();
         head.getStyleClass().add("header-container");
 
-        Label name1 = new Label("Player 1");
-        name1.getStyleClass().add("player-name");
+        names[0] = new Label("first Player");
+        names[0].getStyleClass().add("player-name");
 
-        Label name2 = new Label("Player 2");
-        name2.getStyleClass().add("player-name");
+        names[1] = new Label("seconde Player");
+        names[1].getStyleClass().add("player-name");
 
 
         VBox player1 = new VBox();
         player1.getStyleClass().add("player-container");
-        player1.getChildren().add(name1);
+        player1.getChildren().add(names[0]);
         HBox player1Balls = new HBox();
         player1Balls.getStyleClass().add("balls-container");
         for(Ball b : playerManager.players.get(0).balls){
@@ -142,7 +214,7 @@ public class Game {
         player1.getChildren().add(player1Balls);
 
         VBox player2 = new VBox();
-        player2.getChildren().add(name2);
+        player2.getChildren().add(names[1]);
         player2.getStyleClass().add("player-container");
         HBox player2Balls = new HBox();
         player2Balls.getStyleClass().add("balls-container");
@@ -156,6 +228,8 @@ public class Game {
         head.setMinSize(HEAD_WIDTH,HEAD_HEIGHT);
         return head;
     }
+
+
     public Pane getWinContainer(){
         if(Winner != null ){
             VBox vb = new VBox();
@@ -167,7 +241,7 @@ public class Game {
             goback = new Button("Go to Menu");
             goback.getStyleClass().add("btn");
             goback.setOnMouseClicked(e->{
-                Main.activate("Menu");
+                Main.activate(Main.MENU);
             });
             vb.getChildren().addAll(lbl,goback);
             return vb;
@@ -176,7 +250,7 @@ public class Game {
     }
     public Pane getPauseContainer(){
             VBox vb = new VBox();
-            vb.getStyleClass().add("box-win");
+            vb.getStyleClass().add("box-pause");
 
             Label lbl = new Label("Game Paused !");
             lbl.getStyleClass().add("lbl-win");
@@ -196,6 +270,7 @@ public class Game {
         imgV.setCache(true);
         gameContainer.getChildren().add(imgV);
         gameContainer.setPrefSize(TABLE_WIDTH,TABLE_HEIGHT);
+        gameContainer.setStyle("-fx-cursor: hand");
         ballManager.drawBalls();
         Ball white = ballManager.balls[15];
         stick.white = white;
@@ -210,14 +285,16 @@ public class Game {
         return root;
     }
 
-    void toggleGamePauseStop(){
+    public void toggleGamePauseStop(){
         if(!isGamePaused){
             gameLoop.pause();
+            gameContainer.setStyle("-fx-cursor: wait");
             isGamePaused=true;
             stackpane.getChildren().add(pauseView);
         }
         else{
             gameLoop.play();
+            gameContainer.setStyle("-fx-cursor: hand");
             isGamePaused=false;
             stackpane.getChildren().remove(pauseView);
         }
@@ -233,11 +310,10 @@ public class Game {
                     {
                          if(!isGameOver) {
                             stick.render(isMousePressed,mousePosition,MousePressedTime.get());
-                            // update ball
                             ballManager.handleHoleCollisions();
                             ballManager.handleWallCollisions();
                             ballManager.handleBallsCollisions();
-                            ballManager.handleWhiteBallFall();
+                            handleWhiteBallFall();
                             ballManager.handleEdgesCollisions();
                             playerManager.handlePlayerTurnUI();
                             if(stick.translationValue == 0)
@@ -247,7 +323,8 @@ public class Game {
                             gameLoop.stop();
                             stick.hide();
                             Pane  p = getWinContainer();
-                            stackpane.getChildren().add(p);
+                            if(p != null)
+                                stackpane.getChildren().add(p);
                         }
                         // else show msg end
                     }
@@ -256,4 +333,5 @@ public class Game {
         gameLoop.getKeyFrames().add( kf );
         gameLoop.play();
     }
+
 }

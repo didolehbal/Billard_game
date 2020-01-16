@@ -17,7 +17,7 @@
 .balls-container{
     -fx-min-height: 40px;
     -fx-border-color: yellow;
-    -fx-border-width: 1px;
+    -fx-border-width: 0px;
     -fx-alignment: center;
     -fx-spacing: 20px;
 }

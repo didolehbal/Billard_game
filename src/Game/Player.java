@@ -1,10 +1,20 @@
+package Game;
+
 import javafx.scene.layout.HBox;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-class Player {
-   String name;
+public class Player {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    String name;
    Queue<Ball> balls = new LinkedList<>();
    boolean hasTurn = false;
    boolean hasWon = false;

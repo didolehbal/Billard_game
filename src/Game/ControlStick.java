@@ -1,3 +1,5 @@
+package Game;
+
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
@@ -32,7 +34,7 @@ public class ControlStick {
         initSounds();
     }
 
-    void translateStick ( boolean isMousePressed, PVector mousePos, long timePressed){
+    void translateStick (boolean isMousePressed, PVector mousePos, long timePressed){
         timePressed =  System.currentTimeMillis() - timePressed;
         if(timePressed > Game.MAX_POWER)
             timePressed = Game.MAX_POWER;
@@ -115,7 +117,7 @@ public class ControlStick {
        }
     }
     public void show(){
-        if(isHidden && !white.isFalling && ! BallsManager.areballsMoving){
+        if(isHidden && !white.isFalling && !white.isHandled && !white.isHidden() && ! BallsManager.areballsMoving){
             if(!BallsManager.hasScored){
                 PlayerManager.switchturn();
             }

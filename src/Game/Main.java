@@ -1,22 +1,38 @@
+package Game;
+
+import Client.GameOnline;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
     public static Scene s;
     public static Stage st;
-    protected static void activate(String name){
+    public static final String MENU = "MENU";
+    public static final String ONLINE = "ONLINE";
+    public static final String OFFLINE = "OFFLINE";
+    public static void activate(String name){
         System.out.println(name + " rendering...");
             switch (name){
-                case "Menu" :
+                case MENU:
                     s.setRoot(new Menu().getContainer());
                     st.sizeToScene();
                     st.setResizable(false);
                     break;
-                case "Game" :
+                case OFFLINE :
                     s.setRoot(new Game().getGameContainer());
                     st.setHeight(Game.WINDOW_HEIGHT);
                     st.setWidth(Game.WINDOW_WIDTH);
+                    st.sizeToScene();
+                    st.setResizable(false);
+                    break;
+                case ONLINE :
+                    Pane p = new GameOnline().getGameContainer();
+                    if(p == null) break;
+                    s.setRoot(p);
+                    st.setHeight(GameOnline.WINDOW_HEIGHT);
+                    st.setWidth(GameOnline.WINDOW_WIDTH);
                     st.sizeToScene();
                     st.setResizable(false);
                     break;
@@ -36,5 +52,11 @@ public class Main extends Application {
         stage.setScene(s);
         stage.setResizable(false);
         stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        System.out.println("AppClosed !");
     }
 }

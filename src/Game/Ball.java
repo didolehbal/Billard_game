@@ -1,3 +1,5 @@
+package Game;
+
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -12,10 +14,15 @@ public class Ball {
     public  Sphere sphere =new Sphere(10,40);
     PVector velocity = new PVector(0,0);
     double power = 0;
-    private boolean isHidden = false;
     int ballid = -1;
     boolean isFalling = false;
-    Ball( double x, double y, String imageName, Color color) {
+    private boolean isHidden = false;
+    boolean isHandled = false;
+    public void setHidden(boolean hidden) {
+        isHidden = hidden;
+    }
+
+    Ball(double x, double y, String imageName, Color color) {
         sphere.setLayoutX(x);
         sphere.setLayoutY(y);
         sphere.setRadius(10);

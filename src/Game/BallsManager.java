@@ -15,7 +15,7 @@ public class BallsManager {
     private  AudioClip ballFallingSound;
     static boolean areballsMoving = false;
     static boolean hasScored = false;
-    //final static PVector INITIAL_WHITE_POS = new PVector(Game.TABLE_WIDTH/2 - 200, Game.TABLE_HEIGHT/2);
+    final static PVector INITIAL_WHITE_POS = new PVector(Game.TABLE_WIDTH/2 - 200, Game.TABLE_HEIGHT/2);
     Circle[] holes;
     BallsManager(Pane container, Circle[] holes){
         this.holes = holes;
@@ -165,7 +165,6 @@ public class BallsManager {
           }
           if (b.getY() >= 83 && b.getY() <= 409) {
               if (805 - b.getX() <= 11){ // 11 = radius + 1px
-                  System.out.println("danger");
                   playBallHitWallSound();
                   b.velocity.x = - b.velocity.x;
                   b.setX(b.getX() - 2);// in case its inside the wall
@@ -173,7 +172,7 @@ public class BallsManager {
           }
         }
     }
-    public final static PVector INITIAL_WHITE_POS = new PVector( 435, 420);
+    //public final static PVector INITIAL_WHITE_POS = new PVector( 793, 420);
 
     public void handleEdgesCollisions() {
 
@@ -239,11 +238,21 @@ public class BallsManager {
                     double fi = Math.atan2( 39 - 45 , 797 - 780 ) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
+                if(438 - b.getY()  <= 11){
+                    System.out.println("edge 11");
+                    double fi = Math.atan2(  45-39  , 780-797   ) * 180 / Math.PI;
+                    b.velocity = getInclinedHitVect(b.velocity,fi);
+                }
             }
             if (b.getX() > 805 && b.getX() < 825) {
                 if (b.getY() - 83 <= 11 ) {
                     System.out.println("edge 6");
                     double fi = Math.atan2( 83-64 , 805-825) * 180 / Math.PI;
+                    b.velocity = getInclinedHitVect(b.velocity,fi);
+                }
+                if(438-b.getY() <= 11){
+                    System.out.println("edge 12");
+                    double fi = Math.atan2(  64-83 , 825-805  ) * 180 / Math.PI;
                     b.velocity = getInclinedHitVect(b.velocity,fi);
                 }
             }

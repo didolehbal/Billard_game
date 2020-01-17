@@ -24,7 +24,7 @@ public class MatchMakingServer {
                 splayers[1] = server.listen();
                 System.out.println("Seconde Player Connected !");
 
-                System.out.println("Game.Game Starting!...");
+                System.out.println("Game Starting!...");
                 new Thread( new Worker(splayers)).start();
             }
         }catch (Exception ex){

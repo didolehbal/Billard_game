@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
@@ -63,7 +64,7 @@ public class Game {
         holes[5] = new Circle(813,440,20);
         for(Circle hole : holes){
             if(hole == null) continue;
-            //hole.setFill(Color.RED); to preview the hole
+           // hole.setFill(Color.RED);// to preview the hole
             hole.setOpacity(0);
             gameContainer.getChildren().add(hole);
         }
@@ -326,7 +327,6 @@ public class Game {
                             if(p != null)
                                 stackpane.getChildren().add(p);
                         }
-                        // else show msg end
                     }
                 });
 

@@ -12,9 +12,9 @@ public class Payload implements Serializable {
     public static final String SET_OPNNENT_NAME = "SET_OPNNENT_NAME";
     public static final String SET_NEW_WHITE_POSITION = "SET_NEW_WHITE_POSITION";
     public static final String QUIT = "QUIT";
+
     public String code;
     public Object body;
-    public Object body2;
     public Payload(String code){
         this.code = code;
     }

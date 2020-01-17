@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.util.Optional;
 
 public class GameOnline extends Game {
-    final String IP = "localhost";
+    final String IP = "10.10.5.179";
     final int PORT = 8666;
     PlayerSocket player;
     public Pane waitView;
@@ -49,6 +49,9 @@ public class GameOnline extends Game {
         super.setWhitePosition();
     }
     public void setWhitePosition(){
+        if(!player.hasTurn){
+            return;
+        }
         try {
             Payload req = new Payload(Payload.SET_NEW_WHITE_POSITION);
             req.body = getPlayerName();

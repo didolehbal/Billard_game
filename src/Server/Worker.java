@@ -7,7 +7,6 @@ import java.net.Socket;
 
 public class Worker implements Runnable {
     PlayerSocket[] players = new PlayerSocket[2];
-    boolean isGameOver = false;
     public Worker(Socket[] splayers){
         players[0] = new PlayerSocket(splayers[0]);
         players[0].id =0;
@@ -68,6 +67,6 @@ class AsyncPlayerListener extends Thread{
                 }
 
         }
-
     }
+
 }

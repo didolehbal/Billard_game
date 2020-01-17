@@ -5,8 +5,6 @@ import Shared.PlayerSocket;
 import Shared.Payload;
 import javafx.application.Platform;
 
-import javax.print.attribute.standard.RequestingUserName;
-
 
 public class AsyncListener implements Runnable {
     GameOnline game;

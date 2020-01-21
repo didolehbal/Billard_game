@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.util.Optional;
 
 public class GameOnline extends Game {
-    final String IP = "10.10.5.179";
+    final String IP = "localhost";
     final int PORT = 8666;
     PlayerSocket player;
     public Pane waitView;
